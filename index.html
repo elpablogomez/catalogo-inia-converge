@@ -181,6 +181,30 @@
       border-color: var(--inia-green);
       box-shadow: 0 0 0 0.2rem rgba(26, 94, 56, 0.15);
     }
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+    th.sortable:hover {
+      background-color: #d1ead9 !important;
+      color: var(--inia-green) !important;
+    }
+    th.sortable .sort-icon {
+      font-size: 0.72rem;
+      opacity: 0.35;
+      margin-left: 3px;
+      transition: opacity 0.15s ease;
+    }
+    th.sortable:hover .sort-icon {
+      opacity: 0.75;
+    }
+    th.sortable.sorted-asc .sort-icon,
+    th.sortable.sorted-desc .sort-icon {
+      opacity: 1;
+      color: var(--inia-green) !important;
+    }
 
     /* Modo impresión en PDF sin cortes */
     @page {
@@ -188,7 +212,7 @@
       margin: 8mm 6mm;
     }
     @media print {
-      .header-banner .btn, #searchInput, #categoryFilter, .card, footer, .stats-row {
+      .header-banner .btn, #searchInput, #categoryFilter, #sortSelect, .sort-icon, .card, footer, .stats-row {
         display: none !important;
       }
       .header-banner {
@@ -276,21 +300,33 @@
     <!-- Filtros y Búsqueda -->
     <div class="card border-0 shadow-sm p-3 mb-3 rounded-3">
       <div class="row g-2 align-items-center">
-        <div class="col-md-5">
+        <div class="col-md-4 col-12">
           <div class="input-group">
             <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
             <input type="text" id="searchInput" class="form-control border-start-0 search-input" placeholder="Buscar por solución, categoría, convocatoria o período...">
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6 col-12">
           <select id="categoryFilter" class="form-select search-input">
-            <option value="">Todas las categorías</option>
+            <option value="">Todas las categorías (Sectores)</option>
             <option value="Vegetal Extensivo">Vegetal Extensivo</option>
             <option value="Producción Animal">Producción Animal</option>
             <option value="Vegetal Intensivo">Vegetal Intensivo</option>
           </select>
         </div>
-        <div class="col-md-3 text-md-end text-muted small">
+        <div class="col-md-3 col-sm-6 col-12">
+          <select id="sortSelect" class="form-select search-input">
+            <option value="solucion-asc">Ordenar: Solución (A → Z)</option>
+            <option value="solucion-desc">Ordenar: Solución (Z → A)</option>
+            <option value="fecha-desc">Ordenar: Publicación (Más reciente)</option>
+            <option value="fecha-asc">Ordenar: Publicación (Más antigua)</option>
+            <option value="cat-asc">Ordenar: Sector Productivo (A → Z)</option>
+            <option value="subcat-asc">Ordenar: Subcategoría (A → Z)</option>
+            <option value="conv-desc">Ordenar: Postulación (Más reciente)</option>
+            <option value="conv-asc">Ordenar: Postulación (Más antigua)</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-12 text-md-end text-muted small">
           Mostrando <strong id="visibleCount">23</strong> de 23 soluciones
         </div>
       </div>
@@ -302,12 +338,12 @@
         <table class="table table-hover align-middle mb-0" id="solutionsTable">
           <thead>
             <tr>
-              <th style="min-width: 105px;">Solución / Empresa</th>
-              <th style="min-width: 95px;">Categoría</th>
-              <th style="min-width: 105px;">Subcategoría</th>
-              <th style="min-width: 85px; text-align: center;">Postulación</th>
+              <th class="sortable" data-sort-key="solucion" style="min-width: 110px;">Solución / Empresa <i class="fa-solid fa-sort sort-icon"></i></th>
+              <th class="sortable" data-sort-key="cat" style="min-width: 95px;">Sector / Categoría <i class="fa-solid fa-sort sort-icon"></i></th>
+              <th class="sortable" data-sort-key="subcat" style="min-width: 105px;">Subcategoría <i class="fa-solid fa-sort sort-icon"></i></th>
+              <th class="sortable text-center" data-sort-key="conv" style="min-width: 85px;">Postulación <i class="fa-solid fa-sort sort-icon"></i></th>
               <th style="min-width: 140px;">Período Verificación</th>
-              <th style="min-width: 80px; text-align: center;">Publicación</th>
+              <th class="sortable text-center" data-sort-key="fecha" style="min-width: 80px;">Publicación <i class="fa-solid fa-sort sort-icon"></i></th>
               <th style="min-width: 65px; text-align: center;">Ficha INIA</th>
               <th style="min-width: 125px; text-align: center;">Reportes Técnicos</th>
               <th style="min-width: 70px; text-align: center;">Testimonio</th>
@@ -316,7 +352,7 @@
             </tr>
           </thead>
           <tbody>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="AgriTechnovation" data-cat="Vegetal Extensivo" data-subcat="Agricultura De Precisión" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-02-21">
               <td class="fw-bold text-dark">AgriTechnovation</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Agricultura De Precisión</td>
@@ -329,7 +365,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agritechnovation/AgriTechnovation_Ficha.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://agritechnovation.lat/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="Agroyeitos" data-cat="Vegetal Extensivo" data-subcat="Agricultura De Precisión" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-03-10">
               <td class="fw-bold text-dark">Agroyeitos</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Agricultura De Precisión</td>
@@ -342,7 +378,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agroyeitos/AgroyeitosFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.danielmelo.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="Auravant" data-cat="Vegetal Extensivo" data-subcat="Agricultura De Precisión" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-02-04">
               <td class="fw-bold text-dark">Auravant</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Agricultura De Precisión</td>
@@ -355,7 +391,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Auravant/AuravantFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.auravant.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="Smartway" data-cat="Vegetal Extensivo" data-subcat="Agricultura De Precisión" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-03-21">
               <td class="fw-bold text-dark">Smartway</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Agricultura De Precisión</td>
@@ -368,7 +404,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Smartway/Smartway_ficha_web.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.onsmartway.com/agro/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="Ucrop.it" data-cat="Vegetal Extensivo" data-subcat="Agricultura De Precisión" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-08-19">
               <td class="fw-bold text-dark">Ucrop.it</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Agricultura De Precisión</td>
@@ -381,7 +417,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Ucrop.it/FichaWebUcropit.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://ucrop.it/es/inicio/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="CompassForest" data-cat="Vegetal Extensivo" data-subcat="Forestal" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-02-04">
               <td class="fw-bold text-dark">CompassForest</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Forestal</td>
@@ -394,7 +430,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/CompassForest/CompassForestFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://compassforest.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="Oryzativa" data-cat="Vegetal Extensivo" data-subcat="Arroz" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-02-04">
               <td class="fw-bold text-dark">Oryzativa</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Arroz</td>
@@ -407,7 +443,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Oryzativa/OryzativaFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.oryzativa.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="BioGuardians" data-cat="Vegetal Extensivo" data-subcat="Monitoreo Fitosanitario" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2026-09-09">
               <td class="fw-bold text-dark">BioGuardians</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Monitoreo Fitosanitario</td>
@@ -420,7 +456,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/BioGuardians/BioGuardians_FichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.bioguardiansuy.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Extensivo">
+          <tr data-solucion="DeepAgro" data-cat="Vegetal Extensivo" data-subcat="Control De Aplicaciones" data-conv="Septiembre 2023" data-conv-val="202309" data-fecha="2025-09-10">
               <td class="fw-bold text-dark">DeepAgro</td>
               <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
               <td class="text-secondary small">Control De Aplicaciones</td>
@@ -433,7 +469,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro/Ficha%20Web%20DeepAgro.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.deepagro.com/es/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="Baqueano" data-cat="Producción Animal" data-subcat="Ganadería" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-02-04">
               <td class="fw-bold text-dark">Baqueano</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Ganadería</td>
@@ -446,7 +482,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Baqueano/BaqueanoFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.baqueano.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="Cattler" data-cat="Producción Animal" data-subcat="Ganadería" data-conv="Octubre 2024" data-conv-val="202410" data-fecha="2025-05-23">
               <td class="fw-bold text-dark">Cattler</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Ganadería</td>
@@ -459,7 +495,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Cattler/CattlerFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.cattler.com.ar/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="Insights" data-cat="Producción Animal" data-subcat="Ganadería" data-conv="Octubre 2024" data-conv-val="202410" data-fecha="2025-11-28">
               <td class="fw-bold text-dark">Insights</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Ganadería</td>
@@ -472,7 +508,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Insights/Ficha_web_Insights.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://insightsit.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="Pastech" data-cat="Producción Animal" data-subcat="Ganadería" data-conv="Octubre 2024" data-conv-val="202410" data-fecha="2026-01-22">
               <td class="fw-bold text-dark">Pastech</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Ganadería</td>
@@ -485,7 +521,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Pastech/PastechFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://pastech.com.ar/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="HerdVision" data-cat="Producción Animal" data-subcat="Lechería" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-11-17">
               <td class="fw-bold text-dark">HerdVision</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Lechería</td>
@@ -498,7 +534,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/HerdVision/HerdvisionFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://herd.vision/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="SmaXtec" data-cat="Producción Animal" data-subcat="Lechería" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-02-04">
               <td class="fw-bold text-dark">SmaXtec</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Lechería</td>
@@ -511,7 +547,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SmaXtec/SmaXtecFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://krebz.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="metaBix" data-cat="Producción Animal" data-subcat="Porcinos" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-12-02">
               <td class="fw-bold text-dark">metaBix</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Porcinos</td>
@@ -524,7 +560,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix/Ficha_metaBIX_Porcinos.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://metabixbiotech.com/es/inicio" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Producción Animal">
+          <tr data-solucion="metaBix Avícola" data-cat="Producción Animal" data-subcat="Avicola" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2026-01-07">
               <td class="fw-bold text-dark">metaBix Avícola</td>
               <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
               <td class="text-secondary small">Avicola</td>
@@ -537,7 +573,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix_avicola/Ficha_metaBIX_avicola.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://metabixbiotech.com/es/inicio" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Intensivo">
+          <tr data-solucion="Autolink" data-cat="Vegetal Intensivo" data-subcat="Riego" data-conv="Octubre 2024" data-conv-val="202410" data-fecha="2025-06-26">
               <td class="fw-bold text-dark">Autolink</td>
               <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
               <td class="text-secondary small">Riego</td>
@@ -550,7 +586,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Autolink/AutolinkFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://autolink.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Intensivo">
+          <tr data-solucion="Nettra_Riego" data-cat="Vegetal Intensivo" data-subcat="Riego" data-conv="Septiembre 2023" data-conv-val="202309" data-fecha="2025-08-08">
               <td class="fw-bold text-dark">Nettra_Riego</td>
               <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
               <td class="text-secondary small">Riego</td>
@@ -563,7 +599,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra_Riego/NettraFichaWebRiego.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://nettra.tech/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Intensivo">
+          <tr data-solucion="Wisflow" data-cat="Vegetal Intensivo" data-subcat="Riego" data-conv="Abril 2024" data-conv-val="202404" data-fecha="2025-02-04">
               <td class="fw-bold text-dark">Wisflow</td>
               <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
               <td class="text-secondary small">Riego</td>
@@ -576,7 +612,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Wisflow/WisflowFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://www.wisflow.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Intensivo">
+          <tr data-solucion="SensorData" data-cat="Vegetal Intensivo" data-subcat="Control De Aplicación" data-conv="Mayo 2025" data-conv-val="202505" data-fecha="2026-06-26">
               <td class="fw-bold text-dark">SensorData</td>
               <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
               <td class="text-secondary small">Control De Aplicación</td>
@@ -589,7 +625,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SensorData/ficha%20web%20SensorData.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://sensordata.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Intensivo">
+          <tr data-solucion="Nettra" data-cat="Vegetal Intensivo" data-subcat="Hidroponia" data-conv="Octubre 2024" data-conv-val="202410" data-fecha="2025-02-04">
               <td class="fw-bold text-dark">Nettra</td>
               <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
               <td class="text-secondary small">Hidroponia</td>
@@ -602,7 +638,7 @@
               <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra/NettraFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
               <td class="text-center"><a href="https://nettra.tech/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
             </tr>
-          <tr data-cat="Vegetal Intensivo">
+          <tr data-solucion="TGA" data-cat="Vegetal Intensivo" data-subcat="Gestión De Operaciones" data-conv="Octubre 2025" data-conv-val="202510" data-fecha="2026-07-23">
               <td class="fw-bold text-dark">TGA</td>
               <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
               <td class="text-secondary small">Gestión De Operaciones</td>
@@ -628,9 +664,11 @@
   <script>
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
+    const sortSelect = document.getElementById('sortSelect');
     const tableBody = document.querySelector('#solutionsTable tbody');
     const visibleCount = document.getElementById('visibleCount');
-    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    let rows = Array.from(tableBody.querySelectorAll('tr'));
+    let currentSort = { key: 'solucion', dir: 'asc' };
 
     function filterTable() {
       const query = searchInput.value.toLowerCase().trim();
@@ -655,8 +693,75 @@
       visibleCount.textContent = count;
     }
 
+    function sortTable(key, dir) {
+      currentSort = { key, dir };
+
+      rows.sort((a, b) => {
+        if (key === 'conv') {
+          const valA = parseInt(a.getAttribute('data-conv-val') || '0', 10);
+          const valB = parseInt(b.getAttribute('data-conv-val') || '0', 10);
+          return dir === 'asc' ? valA - valB : valB - valA;
+        }
+
+        if (key === 'fecha') {
+          const valA = a.getAttribute('data-fecha') || '';
+          const valB = b.getAttribute('data-fecha') || '';
+          return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+
+        const valA = a.getAttribute('data-' + key) || '';
+        const valB = b.getAttribute('data-' + key) || '';
+        const comp = valA.localeCompare(valB, 'es', { sensitivity: 'base' });
+        return dir === 'asc' ? comp : -comp;
+      });
+
+      rows.forEach(row => tableBody.appendChild(row));
+
+      document.querySelectorAll('th.sortable').forEach(th => {
+        const thKey = th.getAttribute('data-sort-key');
+        const icon = th.querySelector('.sort-icon');
+        th.classList.remove('sorted-asc', 'sorted-desc');
+        if (thKey === key) {
+          th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+          if (icon) {
+            icon.className = `fa-solid fa-sort-${dir === 'asc' ? 'up' : 'down'} ms-1 text-success sort-icon`;
+          }
+        } else if (icon) {
+          icon.className = 'fa-solid fa-sort ms-1 text-muted sort-icon';
+        }
+      });
+
+      const selectVal = `${key}-${dir}`;
+      if (sortSelect && Array.from(sortSelect.options).some(o => o.value === selectVal)) {
+        sortSelect.value = selectVal;
+      }
+
+      filterTable();
+    }
+
     searchInput.addEventListener('input', filterTable);
     categoryFilter.addEventListener('change', filterTable);
+
+    if (sortSelect) {
+      sortSelect.addEventListener('change', () => {
+        const parts = sortSelect.value.split('-');
+        sortTable(parts[0], parts[1]);
+      });
+    }
+
+    document.querySelectorAll('th.sortable').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.getAttribute('data-sort-key');
+        let dir = 'asc';
+        if (currentSort.key === key && currentSort.dir === 'asc') {
+          dir = 'desc';
+        }
+        sortTable(key, dir);
+      });
+    });
+
+    // Orden inicial por defecto: Solución A -> Z
+    sortTable('solucion', 'asc');
   </script>
 </body>
 </html>

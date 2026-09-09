@@ -528,6 +528,30 @@ html_content = f"""<!DOCTYPE html>
       border-color: var(--inia-green);
       box-shadow: 0 0 0 0.2rem rgba(26, 94, 56, 0.15);
     }}
+    th.sortable {{
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }}
+    th.sortable:hover {{
+      background-color: #d1ead9 !important;
+      color: var(--inia-green) !important;
+    }}
+    th.sortable .sort-icon {{
+      font-size: 0.72rem;
+      opacity: 0.35;
+      margin-left: 3px;
+      transition: opacity 0.15s ease;
+    }}
+    th.sortable:hover .sort-icon {{
+      opacity: 0.75;
+    }}
+    th.sortable.sorted-asc .sort-icon,
+    th.sortable.sorted-desc .sort-icon {{
+      opacity: 1;
+      color: var(--inia-green) !important;
+    }}
 
     /* Modo impresión en PDF sin cortes */
     @page {{
@@ -535,7 +559,7 @@ html_content = f"""<!DOCTYPE html>
       margin: 8mm 6mm;
     }}
     @media print {{
-      .header-banner .btn, #searchInput, #categoryFilter, .card, footer, .stats-row {{
+      .header-banner .btn, #searchInput, #categoryFilter, #sortSelect, .sort-icon, .card, footer, .stats-row {{
         display: none !important;
       }}
       .header-banner {{
@@ -623,21 +647,33 @@ html_content = f"""<!DOCTYPE html>
     <!-- Filtros y Búsqueda -->
     <div class="card border-0 shadow-sm p-3 mb-3 rounded-3">
       <div class="row g-2 align-items-center">
-        <div class="col-md-5">
+        <div class="col-md-4 col-12">
           <div class="input-group">
             <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
             <input type="text" id="searchInput" class="form-control border-start-0 search-input" placeholder="Buscar por solución, categoría, convocatoria o período...">
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6 col-12">
           <select id="categoryFilter" class="form-select search-input">
-            <option value="">Todas las categorías</option>
+            <option value="">Todas las categorías (Sectores)</option>
             <option value="Vegetal Extensivo">Vegetal Extensivo</option>
             <option value="Producción Animal">Producción Animal</option>
             <option value="Vegetal Intensivo">Vegetal Intensivo</option>
           </select>
         </div>
-        <div class="col-md-3 text-md-end text-muted small">
+        <div class="col-md-3 col-sm-6 col-12">
+          <select id="sortSelect" class="form-select search-input">
+            <option value="solucion-asc">Ordenar: Solución (A → Z)</option>
+            <option value="solucion-desc">Ordenar: Solución (Z → A)</option>
+            <option value="fecha-desc">Ordenar: Publicación (Más reciente)</option>
+            <option value="fecha-asc">Ordenar: Publicación (Más antigua)</option>
+            <option value="cat-asc">Ordenar: Sector Productivo (A → Z)</option>
+            <option value="subcat-asc">Ordenar: Subcategoría (A → Z)</option>
+            <option value="conv-desc">Ordenar: Postulación (Más reciente)</option>
+            <option value="conv-asc">Ordenar: Postulación (Más antigua)</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-12 text-md-end text-muted small">
           Mostrando <strong id="visibleCount">{len(items)}</strong> de {len(items)} soluciones
         </div>
       </div>
@@ -649,12 +685,12 @@ html_content = f"""<!DOCTYPE html>
         <table class="table table-hover align-middle mb-0" id="solutionsTable">
           <thead>
             <tr>
-              <th style="min-width: 105px;">Solución / Empresa</th>
-              <th style="min-width: 95px;">Categoría</th>
-              <th style="min-width: 105px;">Subcategoría</th>
-              <th style="min-width: 85px; text-align: center;">Postulación</th>
+              <th class="sortable" data-sort-key="solucion" style="min-width: 110px;">Solución / Empresa <i class="fa-solid fa-sort sort-icon"></i></th>
+              <th class="sortable" data-sort-key="cat" style="min-width: 95px;">Sector / Categoría <i class="fa-solid fa-sort sort-icon"></i></th>
+              <th class="sortable" data-sort-key="subcat" style="min-width: 105px;">Subcategoría <i class="fa-solid fa-sort sort-icon"></i></th>
+              <th class="sortable text-center" data-sort-key="conv" style="min-width: 85px;">Postulación <i class="fa-solid fa-sort sort-icon"></i></th>
               <th style="min-width: 140px;">Período Verificación</th>
-              <th style="min-width: 80px; text-align: center;">Publicación</th>
+              <th class="sortable text-center" data-sort-key="fecha" style="min-width: 80px;">Publicación <i class="fa-solid fa-sort sort-icon"></i></th>
               <th style="min-width: 65px; text-align: center;">Ficha INIA</th>
               <th style="min-width: 125px; text-align: center;">Reportes Técnicos</th>
               <th style="min-width: 70px; text-align: center;">Testimonio</th>
@@ -665,8 +701,17 @@ html_content = f"""<!DOCTYPE html>
           <tbody>
 """
 
+conv_order = {
+    'Septiembre 2023': 202309,
+    'Abril 2024': 202404,
+    'Octubre 2024': 202410,
+    'Mayo 2025': 202505,
+    'Octubre 2025': 202510,
+}
+
 for item in items:
     cat_class = "cat-" + re.sub(r'[^a-zA-Z0-9]', '-', item["categoria"].lower())
+    conv_val = conv_order.get(item["convocatoria_postulacion"], 0)
     
     # Convocatoria / Postulación
     conv_html = f'<span class="badge-conv">{item["convocatoria_postulacion"]}</span>'
@@ -709,7 +754,7 @@ for item in items:
     else:
         web_btn = '<span class="text-muted small">-</span>'
 
-    html_content += f"""          <tr data-cat="{item['categoria']}">
+    html_content += f"""          <tr data-solucion="{item['solucion']}" data-cat="{item['categoria']}" data-subcat="{item['subcategoria']}" data-conv="{item['convocatoria_postulacion']}" data-conv-val="{conv_val}" data-fecha="{item['fecha_publicacion_web']}">
               <td class="fw-bold text-dark">{item['solucion']}</td>
               <td><span class="badge-cat {cat_class}">{item['categoria']}</span></td>
               <td class="text-secondary small">{item['subcategoria']}</td>
@@ -737,9 +782,11 @@ html_content += f"""          </tbody>
   <script>
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
+    const sortSelect = document.getElementById('sortSelect');
     const tableBody = document.querySelector('#solutionsTable tbody');
     const visibleCount = document.getElementById('visibleCount');
-    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    let rows = Array.from(tableBody.querySelectorAll('tr'));
+    let currentSort = {{ key: 'solucion', dir: 'asc' }};
 
     function filterTable() {{
       const query = searchInput.value.toLowerCase().trim();
@@ -764,8 +811,75 @@ html_content += f"""          </tbody>
       visibleCount.textContent = count;
     }}
 
+    function sortTable(key, dir) {{
+      currentSort = {{ key, dir }};
+
+      rows.sort((a, b) => {{
+        if (key === 'conv') {{
+          const valA = parseInt(a.getAttribute('data-conv-val') || '0', 10);
+          const valB = parseInt(b.getAttribute('data-conv-val') || '0', 10);
+          return dir === 'asc' ? valA - valB : valB - valA;
+        }}
+
+        if (key === 'fecha') {{
+          const valA = a.getAttribute('data-fecha') || '';
+          const valB = b.getAttribute('data-fecha') || '';
+          return dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }}
+
+        const valA = a.getAttribute('data-' + key) || '';
+        const valB = b.getAttribute('data-' + key) || '';
+        const comp = valA.localeCompare(valB, 'es', {{ sensitivity: 'base' }});
+        return dir === 'asc' ? comp : -comp;
+      }});
+
+      rows.forEach(row => tableBody.appendChild(row));
+
+      document.querySelectorAll('th.sortable').forEach(th => {{
+        const thKey = th.getAttribute('data-sort-key');
+        const icon = th.querySelector('.sort-icon');
+        th.classList.remove('sorted-asc', 'sorted-desc');
+        if (thKey === key) {{
+          th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+          if (icon) {{
+            icon.className = `fa-solid fa-sort-${{dir === 'asc' ? 'up' : 'down'}} ms-1 text-success sort-icon`;
+          }}
+        }} else if (icon) {{
+          icon.className = 'fa-solid fa-sort ms-1 text-muted sort-icon';
+        }}
+      }});
+
+      const selectVal = `${{key}}-${{dir}}`;
+      if (sortSelect && Array.from(sortSelect.options).some(o => o.value === selectVal)) {{
+        sortSelect.value = selectVal;
+      }}
+
+      filterTable();
+    }}
+
     searchInput.addEventListener('input', filterTable);
     categoryFilter.addEventListener('change', filterTable);
+
+    if (sortSelect) {{
+      sortSelect.addEventListener('change', () => {{
+        const parts = sortSelect.value.split('-');
+        sortTable(parts[0], parts[1]);
+      }});
+    }}
+
+    document.querySelectorAll('th.sortable').forEach(th => {{
+      th.addEventListener('click', () => {{
+        const key = th.getAttribute('data-sort-key');
+        let dir = 'asc';
+        if (currentSort.key === key && currentSort.dir === 'asc') {{
+          dir = 'desc';
+        }}
+        sortTable(key, dir);
+      }});
+    }});
+
+    // Orden inicial por defecto: Solución A -> Z
+    sortTable('solucion', 'asc');
   </script>
 </body>
 </html>
