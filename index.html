@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Soluciones - INIA Converge</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --inia-green: #1a5e38;
+      --inia-light-green: #eaf5ee;
+      --inia-accent: #2e7d32;
+    }
+    body {
+      background-color: #f8fafc;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+    }
+    .header-banner {
+      background: linear-gradient(135deg, #134e2c 0%, #1e6b3f 100%);
+      color: white;
+      padding: 1.75rem 1rem;
+      border-bottom: 4px solid #103d22;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .stats-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.1rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      text-align: center;
+    }
+    .stats-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--inia-green);
+    }
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+      padding: 1rem;
+      width: 100%;
+    }
+    .table {
+      font-size: 0.82rem;
+      margin-bottom: 0;
+      width: 100%;
+    }
+    .table thead th {
+      background-color: var(--inia-light-green);
+      color: var(--inia-green);
+      font-weight: 600;
+      border-bottom: 2px solid #cce8d5;
+      padding: 0.55rem 0.35rem;
+      vertical-align: middle;
+      font-size: 0.8rem;
+    }
+    .table tbody td {
+      padding: 0.5rem 0.35rem;
+      vertical-align: middle;
+    }
+    .btn-action {
+      padding: 0.22rem 0.45rem;
+      font-size: 0.74rem;
+      border-radius: 5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      margin: 1px;
+      white-space: nowrap;
+    }
+    .btn-pdf {
+      background-color: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .btn-pdf:hover {
+      background-color: #dc2626;
+      color: white;
+    }
+    .btn-detail {
+      background-color: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #ffedd5;
+    }
+    .btn-detail:hover {
+      background-color: #ea580c;
+      color: white;
+    }
+    .btn-video {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    .btn-video:hover {
+      background-color: #2563eb;
+      color: white;
+    }
+    .btn-ficha {
+      background-color: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .btn-ficha:hover {
+      background-color: #16a34a;
+      color: white;
+    }
+    .btn-web {
+      background-color: #faf5ff;
+      color: #7e22ce;
+      border: 1px solid #e9d5ff;
+    }
+    .btn-web:hover {
+      background-color: #9333ea;
+      color: white;
+    }
+    .badge-cat {
+      font-size: 0.74rem;
+      padding: 0.22rem 0.45rem;
+      border-radius: 12px;
+      font-weight: 600;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .cat-vegetal-extensivo {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+    .cat-produccin-animal {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    .cat-vegetal-intensivo {
+      background-color: #dcfce7;
+      color: #15803d;
+    }
+    .date-pub {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #0f5132;
+      background: #d1e7dd;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .badge-conv {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #4338ca;
+      background: #e0e7ff;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .periodo-box {
+      font-size: 0.75rem;
+      line-height: 1.25;
+      color: #334155;
+      max-width: 160px;
+      word-break: normal;
+      overflow-wrap: break-word;
+      display: inline-block;
+    }
+    .search-input {
+      border-radius: 8px;
+      padding: 0.55rem 0.85rem;
+      border: 1px solid #cbd5e1;
+      font-size: 0.9rem;
+    }
+    .search-input:focus {
+      border-color: var(--inia-green);
+      box-shadow: 0 0 0 0.2rem rgba(26, 94, 56, 0.15);
+    }
+
+    /* Modo impresión en PDF sin cortes */
+    @page {
+      size: A4 landscape;
+      margin: 8mm 6mm;
+    }
+    @media print {
+      .header-banner .btn, #searchInput, #categoryFilter, .card, footer, .stats-row {
+        display: none !important;
+      }
+      .header-banner {
+        padding: 0.5rem 0 !important;
+        background: none !important;
+        color: #000 !important;
+        border-bottom: 2px solid #1a5e38 !important;
+        margin-bottom: 0.5rem !important;
+      }
+      .header-banner h1, .header-banner p {
+        color: #000 !important;
+      }
+      .table-container {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+      .table {
+        font-size: 6.8pt !important;
+        width: 100% !important;
+      }
+      .table th, .table td {
+        padding: 2px 3px !important;
+      }
+      .btn-action {
+        padding: 1px 2px !important;
+        font-size: 6.2pt !important;
+      }
+      .badge-cat, .badge-conv, .date-pub {
+        font-size: 6.2pt !important;
+        padding: 1px 3px !important;
+      }
+      body {
+        background: #fff !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-banner">
+    <div class="container-fluid px-lg-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+          <span class="badge bg-light text-success mb-1 px-3 py-1 fw-bold">Sello INIA Converge</span>
+          <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-leaf me-2"></i>Catálogo de Soluciones y Materiales</h1>
+          <p class="mb-0 text-white-50 small">Plataforma de validación técnica y difusión de tecnologías AgTech</p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="soluciones_inia_converge.xlsx" class="btn btn-light fw-semibold text-success shadow-sm" download>
+            <i class="fa-solid fa-file-excel text-success me-1"></i> Descargar Excel
+          </a>
+          <a href="soluciones_inia_converge.pdf" class="btn btn-light fw-semibold text-danger shadow-sm" download>
+            <i class="fa-solid fa-file-pdf text-danger me-1"></i> Descargar PDF
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid px-lg-4 pb-5">
+
+    <!-- 3 Tarjetas de Resumen -->
+    <div class="row g-3 mb-3 stats-row">
+      <div class="col-md-4 col-4">
+        <div class="stats-card">
+          <div class="stats-num" id="count-total">23</div>
+          <div class="text-muted small fw-semibold">Soluciones Publicadas</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-4">
+        <div class="stats-card">
+          <div class="stats-num">3</div>
+          <div class="text-muted small fw-semibold">Áreas Productivas</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-4">
+        <div class="stats-card">
+          <div class="stats-num">13</div>
+          <div class="text-muted small fw-semibold">Subcategorías</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="card border-0 shadow-sm p-3 mb-3 rounded-3">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-5">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" id="searchInput" class="form-control border-start-0 search-input" placeholder="Buscar por solución, categoría, convocatoria o período...">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <select id="categoryFilter" class="form-select search-input">
+            <option value="">Todas las categorías</option>
+            <option value="Vegetal Extensivo">Vegetal Extensivo</option>
+            <option value="Producción Animal">Producción Animal</option>
+            <option value="Vegetal Intensivo">Vegetal Intensivo</option>
+          </select>
+        </div>
+        <div class="col-md-3 text-md-end text-muted small">
+          Mostrando <strong id="visibleCount">23</strong> de 23 soluciones
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla Adaptada -->
+    <div class="table-container">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="solutionsTable">
+          <thead>
+            <tr>
+              <th style="min-width: 105px;">Solución / Empresa</th>
+              <th style="min-width: 95px;">Categoría</th>
+              <th style="min-width: 105px;">Subcategoría</th>
+              <th style="min-width: 85px; text-align: center;">Postulación</th>
+              <th style="min-width: 140px;">Período Verificación</th>
+              <th style="min-width: 80px; text-align: center;">Publicación</th>
+              <th style="min-width: 65px; text-align: center;">Ficha INIA</th>
+              <th style="min-width: 125px; text-align: center;">Reportes Técnicos</th>
+              <th style="min-width: 70px; text-align: center;">Testimonio</th>
+              <th style="min-width: 60px; text-align: center;">Ficha</th>
+              <th style="min-width: 60px; text-align: center;">Web</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">AgriTechnovation</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Agricultura De Precisión</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Setiembre 2024 a Febrero 2025</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-21</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Vegetal-extensivo/Agricultura-de-precisión/Agritechnovation" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agritechnovation/Reporte_Agri_Technovation.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agritechnovation/Informe%20Agri%20Technovation.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agritechnovation/Videotestimonio_AgriTechnovation.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agritechnovation/AgriTechnovation_Ficha.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://agritechnovation.lat/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">Agroyeitos</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Agricultura De Precisión</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Septiembre 2024 a Febrero 2025 (Zafra 2023-2024)</div></td>
+              <td class="text-center"><span class="date-pub">2025-03-10</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Vegetal-extensivo/Agricultura-de-precisión/Agroyeitos" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agroyeitos/Reporte%20Agroyeitos.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agroyeitos/Informe%20Agroyeitos.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agroyeitos/Videotestimonio_Agroyeitos.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Agroyeitos/AgroyeitosFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.danielmelo.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">Auravant</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Agricultura De Precisión</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Septiembre 2024 a Febrero 2025</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-04</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-extensivo/agricultura-de-precisión/Auravant" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Auravant/Reporte_Auravant.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Auravant/Informe%20Auravant.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Auravant/Testimonio_Auravant.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Auravant/AuravantFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.auravant.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">Smartway</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Agricultura De Precisión</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Octubre 2024 a Enero 2025</div></td>
+              <td class="text-center"><span class="date-pub">2025-03-21</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-extensivo/agricultura-de-precisión/Smartway" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Smartway/Reporte_Smartway.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Smartway/Informe_Smartway.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Smartway/Testimonio_Smartway.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Smartway/Smartway_ficha_web.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.onsmartway.com/agro/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">Ucrop.it</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Agricultura De Precisión</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Enero a Mayo 2025 (Zafra 2024)</div></td>
+              <td class="text-center"><span class="date-pub">2025-08-19</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-extensivo/agricultura-de-precisión/Ucrop.it" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Ucrop.it/Reporte%20Ucropit.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Ucrop.it/Informe%20Ucropit.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Ucrop.it/Testimonio%20ucropit.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Ucrop.it/FichaWebUcropit.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://ucrop.it/es/inicio/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">CompassForest</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Forestal</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Noviembre 2024 (Ensayos en Cerro Colorado)</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-04</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-extensivo/forestal/Compassforest" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/CompassForest/Reporte%20CompassForest.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/CompassForest/TestimonioPabloCooper.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/CompassForest/CompassForestFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://compassforest.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">Oryzativa</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Arroz</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Zafras de Arroz 2022 a 2024</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-04</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-extensivo/arroz/Oryzativa" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Oryzativa/Reporte%20Oryzativa.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="http://www.ainfo.inia.uy/digital/bitstream/item/17618/1/st-267-2023.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Oryzativa/VideoOryzativa.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Oryzativa/OryzativaFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.oryzativa.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">BioGuardians</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Monitoreo Fitosanitario</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Campañas agrícolas 2024–2025</div></td>
+              <td class="text-center"><span class="date-pub">2026-09-09</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-extensivo/monitoreo-fitosanitario/BioGuardians" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/BioGuardians/Reporte_BioGuardians%20.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/BioGuardians/Informe_BioGuardians.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/BioGuardians/Testimonio_Bioguardians.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/BioGuardians/BioGuardians_FichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.bioguardiansuy.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Extensivo">
+              <td class="fw-bold text-dark">DeepAgro</td>
+              <td><span class="badge-cat cat-vegetal-extensivo">Vegetal Extensivo</span></td>
+              <td class="text-secondary small">Control De Aplicaciones</td>
+              <td class="text-center"><span class="badge-conv">Septiembre 2023</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Febrero a Julio 2025 (Barbecho en 5 chacras)</div></td>
+              <td class="text-center"><span class="date-pub">2025-09-10</span></td>
+              <td class="text-center"><a href="https://www.inia.uy/Converge/vegetal-extensivo/control-de-aplicaciones/Deepagro" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro/Reporte%20DeepAgro.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro/Informe%20DeepAgro.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro/VideoValidacionDeepAgro.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro/Ficha%20Web%20DeepAgro.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.deepagro.com/es/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">Baqueano</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Ganadería</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Diciembre 2024 (Ensayos campo set-oct 2024)</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-04</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Producción-animal/Ganadería/Baqueano" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Baqueano/Reporte_Baqueano.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Baqueano/Informe_Baqueano.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Baqueano/VideoBaqueano.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Baqueano/BaqueanoFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.baqueano.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">Cattler</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Ganadería</td>
+              <td class="text-center"><span class="badge-conv">Octubre 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Abril 2025 (Jornada técnica en feedlot)</div></td>
+              <td class="text-center"><span class="date-pub">2025-05-23</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Producción-animal/Ganadería/Cattler" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Cattler/Reporte_Cattler.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Cattler/VideoCattler.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Cattler/CattlerFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.cattler.com.ar/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">Insights</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Ganadería</td>
+              <td class="text-center"><span class="badge-conv">Octubre 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Abril a Agosto 2025 (Sede INIA Glencoe)</div></td>
+              <td class="text-center"><span class="date-pub">2025-11-28</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Producción-animal/Ganadería/Insights" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Insights/Reporte_Insights.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Insights/Informe_Insights.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Insights/Testimonio_Insights.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Insights/Ficha_web_Insights.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://insightsit.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">Pastech</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Ganadería</td>
+              <td class="text-center"><span class="badge-conv">Octubre 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Mayo a Octubre 2025</div></td>
+              <td class="text-center"><span class="date-pub">2026-01-22</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Producción-animal/Ganadería/Pastech" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Pastech/Reporte%20Pastech.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Pastech/Informe%20Pastech.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Pastech/Testimonio%20Pastech.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Pastech/PastechFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://pastech.com.ar/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">HerdVision</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Lechería</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Julio a Octubre 2025</div></td>
+              <td class="text-center"><span class="date-pub">2025-11-17</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Producción-animal/Lechería/HerdVision" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/HerdVision/Reporte_Herdvision.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/HerdVision/Informe_Herdvision.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/HerdVision/Testimonio_Herdvision.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/HerdVision/HerdvisionFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://herd.vision/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">SmaXtec</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Lechería</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Años 2020 a 2021 (Ensayos corral y pH)</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-04</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Producción-animal/Lechería/Smaxtec" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SmaXtec/Reporte%20SmaXtec.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SmaXtec/Testimonio_SmaXtec.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SmaXtec/SmaXtecFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://krebz.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">metaBix</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Porcinos</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Agosto a Noviembre 2025 (9 sem. recría/preengorde)</div></td>
+              <td class="text-center"><span class="date-pub">2025-12-02</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/Producción-animal/Porcinos/metaBix" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix/Reporte_metaBix_porcinos.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix/Informe_metaBIX_porcinos.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix/Testimonio_metaBIX_porcinos.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix/Ficha_metaBIX_Porcinos.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://metabixbiotech.com/es/inicio" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Producción Animal">
+              <td class="fw-bold text-dark">metaBix Avícola</td>
+              <td><span class="badge-cat cat-producci-n-animal">Producción Animal</span></td>
+              <td class="text-secondary small">Avicola</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Octubre a Diciembre 2025 (Engorde y postura)</div></td>
+              <td class="text-center"><span class="date-pub">2026-01-07</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/producci%C3%B3n-animal/avicola/metaBix-avicola" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix_avicola/Reporte_metaBix_avicola.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix_avicola/Informe_metaBIX_avicola.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix_avicola/Testimonio_metaBIX_avicola.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/metaBix_avicola/Ficha_metaBIX_avicola.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://metabixbiotech.com/es/inicio" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Intensivo">
+              <td class="fw-bold text-dark">Autolink</td>
+              <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
+              <td class="text-secondary small">Riego</td>
+              <td class="text-center"><span class="badge-conv">Octubre 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Febrero a Abril 2025</div></td>
+              <td class="text-center"><span class="date-pub">2025-06-26</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-intensivo/riego/Autolink" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Autolink/Reporte%20Autolink.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Autolink/Informe%20Autolink.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Autolink/Videotestimonio_Autolink.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Autolink/AutolinkFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://autolink.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Intensivo">
+              <td class="fw-bold text-dark">Nettra_Riego</td>
+              <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
+              <td class="text-secondary small">Riego</td>
+              <td class="text-center"><span class="badge-conv">Septiembre 2023</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Junio 2024 a Junio 2025 (INIA Las Brujas)</div></td>
+              <td class="text-center"><span class="date-pub">2025-08-08</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-intensivo/riego/Nettra" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra_Riego/Reporte%20Nettra%20Riego.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra_Riego/Informe%20Nettra%20Riego.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra_Riego/Testimonio%20Nettra%20Riego.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra_Riego/NettraFichaWebRiego.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://nettra.tech/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Intensivo">
+              <td class="fw-bold text-dark">Wisflow</td>
+              <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
+              <td class="text-secondary small">Riego</td>
+              <td class="text-center"><span class="badge-conv">Abril 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Enero a Febrero 2025 (INIA La Estanzuela)</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-04</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-intensivo/riego/Wisflow" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Wisflow/Reporte%20Wisflow_MC.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Wisflow/Video_Wisflow.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Wisflow/WisflowFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://www.wisflow.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Intensivo">
+              <td class="fw-bold text-dark">SensorData</td>
+              <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
+              <td class="text-secondary small">Control De Aplicación</td>
+              <td class="text-center"><span class="badge-conv">Mayo 2025</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Ciclos de aplicación 2025–2026 (Vid y frutales)</div></td>
+              <td class="text-center"><span class="date-pub">2026-06-26</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-intensivo/Control-de-aplicaci%C3%B3n/SensorData" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SensorData/REPORTE%20SENSORDATA.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SensorData/Testimonio%20SensorData.pdf" target="_blank" class="btn btn-action btn-pdf" title="Testimonio de Validación"><i class="fa-solid fa-file-pdf"></i> PDF</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/SensorData/ficha%20web%20SensorData.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://sensordata.com.uy/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Intensivo">
+              <td class="fw-bold text-dark">Nettra</td>
+              <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
+              <td class="text-secondary small">Hidroponia</td>
+              <td class="text-center"><span class="badge-conv">Octubre 2024</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Setiembre a Diciembre 2024 (Verdeagua)</div></td>
+              <td class="text-center"><span class="date-pub">2025-02-04</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-intensivo/hidroponia/Nettra" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra/Reporte%20Nettra%20Hidroponia.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra/Nettra_Testimonio.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Nettra/NettraFichaWeb.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://nettra.tech/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          <tr data-cat="Vegetal Intensivo">
+              <td class="fw-bold text-dark">TGA</td>
+              <td><span class="badge-cat cat-vegetal-intensivo">Vegetal Intensivo</span></td>
+              <td class="text-secondary small">Gestión De Operaciones</td>
+              <td class="text-center"><span class="badge-conv">Octubre 2025</span></td>
+              <td><div class="periodo-box"><i class="fa-regular fa-clock text-muted me-1"></i>Febrero a Julio 2026 (Pruebas operativas en campo)</div></td>
+              <td class="text-center"><span class="date-pub">2026-07-23</span></td>
+              <td class="text-center"><a href="https://inia.uy/Converge/vegetal-intensivo/gesti%C3%B3n-de-operaciones/tga" target="_blank" class="btn btn-action btn-outline-secondary" title="Ficha en portal INIA"><i class="fa-solid fa-arrow-up-right-from-square"></i> INIA</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/TGA/Reporte%20TGA.pdf" target="_blank" class="btn btn-action btn-pdf" title="Reporte de Verificación"><i class="fa-solid fa-file-pdf"></i> Reporte</a><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/TGA/Informe%20TGA.pdf" target="_blank" class="btn btn-action btn-detail" title="Informe Técnico Detallado"><i class="fa-solid fa-book-open"></i> Detallado</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/TGA/entrevista%20tga.mp4" target="_blank" class="btn btn-action btn-video" title="Testimonio de Validación"><i class="fa-solid fa-video"></i> Video</a></td>
+              <td class="text-center"><a href="https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/TGA/TGA-ficha.png" target="_blank" class="btn btn-action btn-ficha" title="Ficha Gráfica"><i class="fa-solid fa-image"></i> Ficha</a></td>
+              <td class="text-center"><a href="https://tugestionagropecuaria.com/" target="_blank" class="btn btn-action btn-web" title="Sitio Web Oficial"><i class="fa-solid fa-globe"></i> Web</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <footer class="text-center text-muted small mt-4">
+      Catálogo INIA Converge | Actualizado al 09/09/2026.
+    </footer>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const tableBody = document.querySelector('#solutionsTable tbody');
+    const visibleCount = document.getElementById('visibleCount');
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+    function filterTable() {
+      const query = searchInput.value.toLowerCase().trim();
+      const selectedCat = categoryFilter.value;
+      let count = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const cat = row.getAttribute('data-cat');
+        
+        const matchesQuery = !query || text.includes(query);
+        const matchesCat = !selectedCat || cat === selectedCat;
+
+        if (matchesQuery && matchesCat) {
+          row.style.display = '';
+          count++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      visibleCount.textContent = count;
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    categoryFilter.addEventListener('change', filterTable);
+  </script>
+</body>
+</html>
