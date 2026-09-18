@@ -1,0 +1,47 @@
+﻿name: Actualización Diaria INIA Converge
+
+on:
+  schedule:
+    # Corre todos los días a las 06:00 UTC (03:00 AM hora de Uruguay, UTC-3)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Permite disparar la actualización manualmente desde la pestaña Actions en GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar monitor diario de INIA Converge
+        run: |
+          python monitor_converge_diario.py
+
+      - name: Desplegar cambios en caso de nuevas publicaciones
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Cambios detectados. Creando commit y enviando a main..."
+            git add .
+            git commit -m "Auto-actualización: Nuevas soluciones INIA Converge [skip ci]"
+            git push
+            echo "¡Catálogo y GitHub Pages actualizados exitosamente!"
+          else
+            echo "No se detectaron cambios nuevos. El catálogo se encuentra al día."
+          fi
