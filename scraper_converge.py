@@ -19,7 +19,9 @@ import subprocess
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    target_script = os.path.join(script_dir, "generar_catalogo_completo_con_pdf.py")
+    target_script = os.path.join(script_dir, "monitor_converge_diario.py")
+    if not os.path.exists(target_script):
+        target_script = os.path.join(script_dir, "generar_catalogo_completo_con_pdf.py")
     if os.path.exists(target_script):
         subprocess.run([sys.executable, target_script], check=True)
     else:

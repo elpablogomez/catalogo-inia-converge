@@ -1,3 +1,4 @@
+import os
 import json
 import csv
 import re
@@ -11,8 +12,14 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # 1. Cargar datos base
-with open('soluciones_converge_fechas_completas.json', 'r', encoding='utf-8') as f:
+base_json_path = os.path.join(BASE_DIR, 'soluciones_converge_fechas_completas.json')
+if not os.path.exists(base_json_path):
+    base_json_path = os.path.join(BASE_DIR, 'soluciones_inia_converge.json')
+
+with open(base_json_path, 'r', encoding='utf-8') as f:
     items = json.load(f)
 
 # Convocatoria / Postulación extraída de la solapa de Google Sheets
@@ -65,7 +72,8 @@ periodos_curados = {
     "Wisflow": "Enero a Febrero 2025 (INIA La Estanzuela)",
     "SensorData": "Ciclos de aplicación 2025–2026 (Vid y frutales)",
     "Nettra": "Setiembre a Diciembre 2024 (Verdeagua)",
-    "TGA": "Febrero a Julio 2026 (Pruebas operativas en campo)"
+    "TGA": "Febrero a Julio 2026 (Pruebas operativas en campo)",
+    "Solagro": "Octubre 2025 (INIA La Estanzuela)"
 }
 
 for item in items:
@@ -75,11 +83,11 @@ for item in items:
         item["periodo_evaluacion"] = periodos_curados[name]
 
 # 2. Guardar JSON
-with open('soluciones_inia_converge.json', 'w', encoding='utf-8') as f:
+with open(os.path.join(BASE_DIR, 'soluciones_inia_converge.json'), 'w', encoding='utf-8') as f:
     json.dump(items, f, ensure_ascii=False, indent=2)
 
 # 3. Guardar CSV
-with open('soluciones_inia_converge.csv', 'w', newline='', encoding='utf-8-sig') as f:
+with open(os.path.join(BASE_DIR, 'soluciones_inia_converge.csv'), 'w', newline='', encoding='utf-8-sig') as f:
     writer = csv.writer(f)
     writer.writerow([
         "Categoría",
@@ -221,10 +229,12 @@ for col_idx, width in col_widths.items():
     ws.column_dimensions[get_column_letter(col_idx)].width = width
 
 ws.auto_filter.ref = f"A1:{get_column_letter(len(headers))}{len(items) + 1}"
-wb.save("soluciones_inia_converge.xlsx")
+wb.save(os.path.join(BASE_DIR, "soluciones_inia_converge.xlsx"))
 
 # 5. Generar PDF Profesional Independiente con ReportLab (Horizontal A4, nunca cortado)
-def generar_pdf(dataset, filename="soluciones_inia_converge.pdf"):
+def generar_pdf(dataset, filename=None):
+    if filename is None:
+        filename = os.path.join(BASE_DIR, "soluciones_inia_converge.pdf")
     doc = SimpleDocTemplate(
         filename,
         pagesize=landscape(A4),
@@ -885,7 +895,7 @@ html_content += f"""          </tbody>
 </html>
 """
 
-with open('index.html', 'w', encoding='utf-8') as f:
+with open(os.path.join(BASE_DIR, 'index.html'), 'w', encoding='utf-8') as f:
     f.write(html_content)
 
 print("PDF generado, Excel actualizado, CSV y HTML regenerados exitosamente!")

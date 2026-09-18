@@ -34,10 +34,15 @@ El cuadro consolida los siguientes campos para cada una de las soluciones:
 
 ---
 
-## 🚀 Cómo actualizar los datos en el futuro
+## 🚀 Automatización y Actualización
 
-Para volver a correr el scraper y actualizar la base de datos ante nuevas publicaciones de INIA:
+El repositorio cuenta con un flujo automatizado mediante **GitHub Actions** (`.github/workflows/actualizar_catalogo.yml`):
+* **Frecuencia automática:** Se ejecuta todas las noches a las **03:00 AM hora de Uruguay** (`06:00 UTC`).
+* **Autonomía:** Rastrea el portal de INIA Converge, detecta soluciones nuevas, extrae sus reportes, infiere fechas reales mediante cabeceras HTTP y analiza los períodos técnicos.
+* **Despliegue continuo:** Si detecta novedades, compila automáticamente el catálogo (`.xlsx`, `.pdf`, `.csv`, `.json`, `index.html`) y realiza el push a la rama `main`, actualizando de inmediato [GitHub Pages](https://elpablogomez.github.io/catalogo-inia-converge/).
+* **Ejecución manual:** Puedes disparar la verificación en cualquier momento desde la solapa **Actions** de GitHub seleccionando *Actualización Diaria INIA Converge* > *Run workflow*.
 
+Para ejecutarlo localmente:
 ```bash
-python scraper_converge.py
+python monitor_converge_diario.py
 ```
