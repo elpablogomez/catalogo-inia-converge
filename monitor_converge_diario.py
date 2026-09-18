@@ -8,7 +8,7 @@ Monitor Diario Automatizado de INIA Converge
 3. Si detecta una o más soluciones nuevas:
    - Extrae enlaces a reporte PDF, informe técnico detallado, testimonio (video/PDF), ficha gráfica y web oficial.
    - Infiere la fecha real de publicación mediante la cabecera HTTP 'Last-Modified'.
-   - Extrae el período de evaluación analizando el contenido del reporte PDF.
+   - Extrae el período de evaluación analizando el contenido del reporte PDF mediante Gemini 2.5 Flash (con fallback a regex).
    - Agrega las soluciones a la base y regenera todos los artefactos (Excel, PDF, CSV, JSON, index.html).
 4. Compatible para ejecución en GitHub Actions y de forma local en Windows/Linux.
 """
@@ -113,6 +113,56 @@ def format_category(raw: str) -> str:
 def format_subcategory(raw: str) -> str:
     cleaned = unquote(raw).lower().strip().replace(" ", "-")
     return SUBCATEGORY_MAP.get(cleaned, unquote(raw).replace("-", " ").title())
+
+def get_gemini_api_key() -> str:
+    key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not key:
+        key_path = os.path.expanduser(r"~\.gemini\credentials\gemini_api_key.txt")
+        if os.path.exists(key_path):
+            try:
+                with open(key_path, "r", encoding="utf-8") as f:
+                    key = f.read().strip()
+            except Exception:
+                pass
+    return key
+
+def extract_period_with_gemini(pdf_text: str, session: requests.Session) -> str:
+    api_key = get_gemini_api_key()
+    if not api_key or not pdf_text or len(pdf_text.strip()) < 50:
+        return ""
+
+    prompt = (
+        "Analiza el siguiente texto extraído del reporte técnico de verificación de INIA Converge "
+        "y extrae de forma concisa el 'Período de Verificación Técnica' (cuándo y dónde se realizaron las "
+        "pruebas a campo, por ejemplo: 'Octubre 2025 (INIA La Estanzuela)', 'Setiembre 2024 a Febrero 2025', "
+        "'Junio 2024 a Junio 2025 (INIA Las Brujas)'). "
+        "Responde ÚNICAMENTE con una línea con el período formateado, sin asteriscos, sin comillas y sin texto adicional.\n\n"
+        f"Texto del reporte:\n{pdf_text[:4000]}"
+    )
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.1
+        }
+    }
+
+    try:
+        resp = session.post(url, json=payload, timeout=25)
+        if resp.status_code == 200:
+            data = resp.json()
+            candidate = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            clean_period = candidate.strip().strip('"').strip("'")
+            if clean_period and len(clean_period) < 100:
+                log(f"  [Gemini 2.5 Flash] Período de verificación extraído: {clean_period}")
+                return clean_period
+        else:
+            log(f"  [Gemini] Respuesta HTTP {resp.status_code}: {resp.text[:150]}")
+    except Exception as e:
+        log(f"  [Gemini] Error al consultar API de Gemini: {e}")
+
+    return ""
 
 def crawl_portal(session: requests.Session):
     log("Rastreando categorías y soluciones en INIA Converge...")
@@ -259,16 +309,23 @@ def extract_solution_details(session: requests.Session, sol_info: dict) -> dict:
         except Exception as e:
             log(f"Error obteniendo fecha testimonio: {e}")
 
-    # Extraer período de evaluación desde el texto del PDF si fitz está disponible
+    # Extraer período de evaluación desde el texto del PDF
     if fitz and item["reporte_verificacion"] != "-":
         try:
             r_pdf = session.get(item["reporte_verificacion"], timeout=20)
             if r_pdf.status_code == 200:
                 doc = fitz.open(stream=r_pdf.content, filetype="pdf")
                 txt = " ".join(p.get_text() for p in doc)
-                m = re.search(r"(?:entre|durante|desde|en|con siembra realizada el)\s+([0-9a-záéíóúñ\s\–\-]+(?:de\s+)?202[0-9])", txt, re.IGNORECASE)
-                if m:
-                    item["periodo_evaluacion"] = m.group(0).strip().capitalize()
+
+                # 1. Intentar con Gemini si la API key está disponible
+                gemini_period = extract_period_with_gemini(txt, session)
+                if gemini_period:
+                    item["periodo_evaluacion"] = gemini_period
+                else:
+                    # 2. Fallback a expresiones regulares
+                    m = re.search(r"(?:entre|durante|desde|en|con siembra realizada el)\s+([0-9a-záéíóúñ\s\–\-]+(?:de\s+)?202[0-9])", txt, re.IGNORECASE)
+                    if m:
+                        item["periodo_evaluacion"] = m.group(0).strip().capitalize()
                 
                 # Revisar enlaces internos del PDF si aún no hay informe detallado
                 if item["informe_detallado"] == "-":

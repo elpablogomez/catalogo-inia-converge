@@ -4,7 +4,7 @@ on:
   schedule:
     # Corre todos los días a las 06:00 UTC (03:00 AM hora de Uruguay, UTC-3)
     - cron: '0 6 * * *'
-  workflow_dispatch: # Permite disparar la actualización manualmente desde la pestaña Actions en GitHub
+  workflow_dispatch: # Permite disparar la actualización manualmente desde GitHub
 
 permissions:
   contents: write
@@ -29,6 +29,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Ejecutar monitor diario de INIA Converge
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python monitor_converge_diario.py
 
