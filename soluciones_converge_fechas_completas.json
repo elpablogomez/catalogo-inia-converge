@@ -407,5 +407,41 @@
     "evidencia_correo": "-",
     "fecha_testimonio": "2026-09-17",
     "convocatoria_postulacion": "-"
+  },
+  {
+    "categoria": "Vegetal Extensivo",
+    "subcategoria": "Agricultura De Precisión",
+    "solucion": "deepagro-soja",
+    "fecha_publicacion": "2026-10-15",
+    "periodo_evaluacion": "-",
+    "url_inia": "https://inia.uy/Converge/vegetal-extensivo/agricultura-de-precisión/deepagro-soja",
+    "reporte_verificacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro_Soja/Reporte_DeepAgro_Soja.pdf",
+    "informe_detallado": "-",
+    "testimonio_validacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro_Soja/Testimonio_DeepAgro.pdf",
+    "tipo_testimonio": "PDF",
+    "ficha_grafica": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/DeepAgro_Soja/Ficha_Web_DeepAgro_Soja.png",
+    "pagina_web": "-",
+    "fecha_publicacion_web": "2026-10-15",
+    "evidencia_correo": "-",
+    "fecha_testimonio": "2026-10-15",
+    "convocatoria_postulacion": "-"
+  },
+  {
+    "categoria": "Producción Animal",
+    "subcategoria": "Ganadería",
+    "solucion": "Wincampo",
+    "fecha_publicacion": "2026-10-15",
+    "periodo_evaluacion": "(establecimiento Il Tramonto)",
+    "url_inia": "https://inia.uy/Converge/Producción-animal/Ganadería/Wincampo",
+    "reporte_verificacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Wincampo/Reporte_Wincampo.pdf",
+    "informe_detallado": "-",
+    "testimonio_validacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Wincampo/Testimonio_Wincampo.pdf",
+    "tipo_testimonio": "PDF",
+    "ficha_grafica": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Wincampo/Wincampo_FichaWeb.png",
+    "pagina_web": "https://www.wincampo.com/",
+    "fecha_publicacion_web": "2026-10-15",
+    "evidencia_correo": "-",
+    "fecha_testimonio": "2026-10-15",
+    "convocatoria_postulacion": "-"
   }
 ]
