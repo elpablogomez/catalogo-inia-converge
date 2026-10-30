@@ -25,6 +25,7 @@ with open(base_json_path, 'r', encoding='utf-8') as f:
 # Convocatoria / Postulación extraída de la solapa de Google Sheets
 convocatorias_map = {
     "DeepAgro": "Septiembre 2023",
+    "DeepAgro Soja": "Septiembre 2023",
     "Nettra_Riego": "Septiembre 2023",
     "AgriTechnovation": "Abril 2024",
     "Agroyeitos": "Abril 2024",
@@ -59,6 +60,7 @@ periodos_curados = {
     "Oryzativa": "Zafras de Arroz 2022 a 2024",
     "BioGuardians": "Campañas agrícolas 2024–2025",
     "DeepAgro": "Febrero a Julio 2025 (Barbecho en 5 chacras)",
+    "DeepAgro Soja": "Noviembre 2025 a Febrero 2026 (INIA La Estanzuela - Aplicación selectiva en soja)",
     "Baqueano": "Diciembre 2024 (Ensayos campo set-oct 2024)",
     "Cattler": "Abril 2025 (Jornada técnica en feedlot)",
     "Insights": "Abril a Agosto 2025 (Sede INIA Glencoe)",
@@ -73,7 +75,8 @@ periodos_curados = {
     "SensorData": "Ciclos de aplicación 2025–2026 (Vid y frutales)",
     "Nettra": "Setiembre a Diciembre 2024 (Verdeagua)",
     "TGA": "Febrero a Julio 2026 (Pruebas operativas en campo)",
-    "Solagro": "Octubre 2025 (INIA La Estanzuela)"
+    "Solagro": "Octubre 2025 (INIA La Estanzuela)",
+    "Wincampo": "Instancia de verificación técnica en feedlot (Establecimiento Il Tramonto)"
 }
 
 for item in items:

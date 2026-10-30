@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Monitor Diario Automatizado de INIA Converge
@@ -231,10 +231,18 @@ def extract_solution_details(session: requests.Session, sol_info: dict) -> dict:
     resp = session.get(url, timeout=25)
     soup = BeautifulSoup(resp.text, "html.parser")
 
+    # Intentar obtener el nombre comercial formateado a partir de los atributos alt de imágenes
+    display_name = name
+    for img in soup.find_all("img"):
+        alt = img.get("alt", "").strip()
+        if alt and normalize_name(alt) == normalize_name(name):
+            display_name = alt
+            break
+
     item = {
         "categoria": format_category(sol_info["raw_cat"]),
         "subcategoria": format_subcategory(sol_info["raw_subcat"]),
-        "solucion": name,
+        "solucion": display_name,
         "fecha_publicacion": "-",
         "periodo_evaluacion": "-",
         "url_inia": url,
@@ -344,7 +352,7 @@ def extract_solution_details(session: requests.Session, sol_info: dict) -> dict:
 def check_new_solutions():
     log("=== Iniciando Verificación Automática de INIA Converge ===")
     known_data = get_known_data()
-    known_names = set(normalize_name(d["solucion"]) for d in known_data)
+    known_by_name = {normalize_name(d["solucion"]): d for d in known_data}
     known_urls = set(d["url_inia"].lower().rstrip("/") for d in known_data)
     log(f"Soluciones registradas localmente en la base: {len(known_data)}")
 
@@ -359,25 +367,49 @@ def check_new_solutions():
 
     log(f"Soluciones detectadas online en portal INIA: {len(online_solutions)}")
 
-    # Detectar cuáles no están en known_data
+    # Detectar nuevas soluciones o sellos reubicados (cambio de URL/categoría)
     nuevas = []
+    cambios_detectados = False
+
     for url_key, info in online_solutions.items():
-        if normalize_name(info["name"]) not in known_names and url_key not in known_urls:
+        norm_name = normalize_name(info["name"])
+        if norm_name in known_by_name:
+            item = known_by_name[norm_name]
+            current_url = item.get("url_inia", "").lower().rstrip("/")
+            new_url = info["url"].lower().rstrip("/")
+            new_cat = format_category(info["raw_cat"])
+            new_subcat = format_subcategory(info["raw_subcat"])
+
+            if current_url != new_url or item.get("subcategoria") != new_subcat or item.get("categoria") != new_cat:
+                log(f"  [ACTUALIZACIÓN DE SELLO REUBICADO] {item['solucion']}:")
+                if current_url != new_url:
+                    log(f"    URL INIA: {item.get('url_inia')} -> {info['url']}")
+                    item["url_inia"] = info["url"]
+                if item.get("subcategoria") != new_subcat:
+                    log(f"    Subcategoría: {item.get('subcategoria')} -> {new_subcat}")
+                    item["subcategoria"] = new_subcat
+                if item.get("categoria") != new_cat:
+                    log(f"    Categoría: {item.get('categoria')} -> {new_cat}")
+                    item["categoria"] = new_cat
+                cambios_detectados = True
+        elif url_key not in known_urls:
             nuevas.append(info)
 
-    if not nuevas:
-        log(f"Verificación finalizada: no hay soluciones nuevas en la web (Total: {len(known_data)}).")
+    if not nuevas and not cambios_detectados:
+        log(f"Verificación finalizada: no hay novedades ni cambios en la web (Total: {len(known_data)}).")
         subprocess.run([sys.executable, os.path.join(BASE_DIR, "generar_catalogo_completo_con_pdf.py")], cwd=BASE_DIR)
         return
 
-    log(f"¡ALERTA! Se detectaron {len(nuevas)} solución(es) NUEVA(S) en el portal:")
-    for n in nuevas:
-        log(f"  -> {n['name']} en {n['url']}")
+    if nuevas:
+        log(f"¡ALERTA! Se detectaron {len(nuevas)} solución(es) NUEVA(S) en el portal:")
+        for n in nuevas:
+            log(f"  -> {n['name']} en {n['url']}")
+        for n in nuevas:
+            new_sol = extract_solution_details(session, n)
+            known_data.append(new_sol)
 
-    # Extraer y agregar cada nueva solución
-    for n in nuevas:
-        new_sol = extract_solution_details(session, n)
-        known_data.append(new_sol)
+    if cambios_detectados:
+        log("Se aplicaron actualizaciones de sellos reubicados en la base local.")
 
     # Guardar en BASE_JSON_FILE y JSON_FILE
     with open(BASE_JSON_FILE, "w", encoding="utf-8") as f:
