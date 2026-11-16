@@ -375,11 +375,11 @@
   },
   {
     "categoria": "Vegetal Intensivo",
-    "subcategoria": "Gestión De Operaciones",
+    "subcategoria": "Gestión Predial",
     "solucion": "TGA",
     "fecha_publicacion": "2026-07-23",
     "periodo_evaluacion": "-",
-    "url_inia": "https://inia.uy/Converge/vegetal-intensivo/gesti%C3%B3n-de-operaciones/tga",
+    "url_inia": "https://inia.uy/Converge/vegetal-intensivo/gesti%C3%B3n-predial/tga",
     "reporte_verificacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/TGA/Reporte%20TGA.pdf",
     "informe_detallado": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/TGA/Informe%20TGA.pdf",
     "testimonio_validacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/TGA/entrevista%20tga.mp4",
@@ -442,6 +442,24 @@
     "fecha_publicacion_web": "2026-10-15",
     "evidencia_correo": "-",
     "fecha_testimonio": "2026-10-15",
+    "convocatoria_postulacion": "-"
+  },
+  {
+    "categoria": "Vegetal Intensivo",
+    "subcategoria": "Gestión Predial",
+    "solucion": "Tracestory",
+    "fecha_publicacion": "2026-11-16",
+    "periodo_evaluacion": "Febrero a Marzo 2025",
+    "url_inia": "https://inia.uy/Converge/vegetal-intensivo/gesti%C3%B3n-predial/tracestory",
+    "reporte_verificacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Tracestory/Reporte_Tracestory.pdf",
+    "informe_detallado": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Tracestory/Informe_Tracestory.pdf",
+    "testimonio_validacion": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Tracestory/Testimonio_Tracestory.pdf",
+    "tipo_testimonio": "PDF",
+    "ficha_grafica": "https://inia.uy/sites/default/files/gras/contenidogras/Reportes/Converge/PaginasProductos/Tracestory/Tracestory_Ficha_web.png",
+    "pagina_web": "https://tracestory.com/",
+    "fecha_publicacion_web": "2026-11-16",
+    "evidencia_correo": "-",
+    "fecha_testimonio": "2026-11-16",
     "convocatoria_postulacion": "-"
   }
 ]
